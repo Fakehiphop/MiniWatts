@@ -390,17 +390,6 @@ struct InlineBatteryView: View {
     }
 }
 
-#Preview(as: .systemSmall) {
-    BatteryWidget()
-} timeline: {
-    BatteryEntry.preview
-}
-
-#Preview(as: .systemMedium) {
-    BatteryWidget()
-} timeline: {
-    BatteryEntry.preview
-}
 
 // MARK: - iOS 16 compat
 
