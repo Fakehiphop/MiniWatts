@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 
 /// Watches the system's own thermal verdict.
