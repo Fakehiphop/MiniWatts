@@ -76,7 +76,7 @@ struct BatteryWidgetView: View {
     var body: some View {
         let palette = WidgetPalette(scheme)
         content(palette)
-            .containerBackground(for: .widget) {
+            .mwWidgetContainerBackground {
                 switch family {
                 case .systemSmall, .systemMedium:
                     LinearGradient(colors: [palette.canvasTop, palette.canvas],
@@ -400,4 +400,31 @@ struct InlineBatteryView: View {
     BatteryWidget()
 } timeline: {
     BatteryEntry.preview
+}
+
+// MARK: - iOS 16 compat
+
+/// `containerBackground(for: .widget)` is iOS 17+. On iOS 16 the same
+/// background is applied as a plain view background; system margins differ
+/// slightly, the artwork is identical.
+private struct MWWidgetContainerBackground<Background: View>: ViewModifier {
+    @ViewBuilder let background: () -> Background
+
+    func body(content: Content) -> some View {
+        if #available(iOS 17.0, *) {
+            content.containerBackground(for: .widget) {
+                background()
+            }
+        } else {
+            content.background {
+                background()
+            }
+        }
+    }
+}
+
+private extension View {
+    func mwWidgetContainerBackground<Background: View>(@ViewBuilder _ background: @escaping () -> Background) -> some View {
+        modifier(MWWidgetContainerBackground(background: background))
+    }
 }

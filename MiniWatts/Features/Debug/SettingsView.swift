@@ -2,8 +2,8 @@ import SwiftUI
 import WidgetKit
 
 struct SettingsView: View {
-    @Environment(PowerMonitor.self) private var monitor
-    @Environment(FloatingMeterController.self) private var floatingMeter
+    @EnvironmentObject private var monitor: PowerMonitor
+    @EnvironmentObject private var floatingMeter: FloatingMeterController
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -47,7 +47,7 @@ struct SettingsView: View {
                 WidgetCenter.shared.reloadAllTimelines()
             }
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: .navigationBarLeading) {
                     Button("Done") { dismiss() }.tint(.mwAccent)
                 }
             }

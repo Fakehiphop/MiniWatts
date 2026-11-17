@@ -2,8 +2,8 @@ import SwiftUI
 import UIKit
 
 struct RootView: View {
-    @Environment(PowerMonitor.self) private var monitor
-    @Environment(FloatingMeterController.self) private var floatingMeter
+    @EnvironmentObject private var monitor: PowerMonitor
+    @EnvironmentObject private var floatingMeter: FloatingMeterController
     @Environment(\.scenePhase) private var scenePhase
     @State private var liveActivity = ChargeActivityController()
     @State private var widgets = WidgetPublisher()
@@ -50,7 +50,7 @@ struct RootView: View {
                 widgets.publish(reading, lastSession: monitor.sessions.first)
             }
         }
-        .onChange(of: scenePhase, initial: true) { _, phase in
+        .onChange(of: scenePhase) { phase in
             switch phase {
             case .active:
                 monitor.start()
@@ -73,6 +73,11 @@ struct RootView: View {
                 // incoming call. Nothing to do.
                 break
             }
+        }
+        .onAppear {
+            // Replicates the `initial: true` first run of the iOS 17 onChange:
+            // the app comes up with an active scene, so the monitor starts.
+            monitor.start()
         }
     }
 }
@@ -113,12 +118,15 @@ private struct TabPage<Content: View>: View {
 /// second. Read in `RootView`'s body, it re-ran that body — and the tab view under
 /// it — on every tick; here it re-runs an empty view.
 private struct ScreenAwakeHolder: View {
-    @Environment(PowerMonitor.self) private var monitor
+    @EnvironmentObject private var monitor: PowerMonitor
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         Color.clear
-            .onChange(of: shouldStayAwake, initial: true) { _, awake in
+            .onAppear {
+                UIApplication.shared.isIdleTimerDisabled = shouldStayAwake
+            }
+            .onChange(of: shouldStayAwake) { awake in
                 UIApplication.shared.isIdleTimerDisabled = awake
             }
     }
@@ -169,7 +177,7 @@ struct PageScaffold<Content: View>: View {
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 if let toolbar {
-                    ToolbarItem(placement: .topBarTrailing) { toolbar }
+                    ToolbarItem(placement: .navigationBarTrailing) { toolbar }
                 }
             }
         }

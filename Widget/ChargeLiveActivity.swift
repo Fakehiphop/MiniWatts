@@ -231,13 +231,22 @@ struct ActivityFootnote: View {
             }
             // The one way to close the activity while MiniWatts is suspended or killed:
             // iOS wakes the app to perform the intent.
-            Button(intent: EndChargeActivityIntent()) {
+            // Interactive Live Activity buttons need iOS 17; on iOS 16.1 the
+            // label shows without the tap-to-end affordance.
+            if #available(iOS 17.0, *) {
+                Button(intent: EndChargeActivityIntent()) {
+                    Label("End", systemImage: "xmark")
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 2)
+                        .background(Capsule().fill(palette.track))
+                }
+                .buttonStyle(.plain)
+            } else {
                 Label("End", systemImage: "xmark")
                     .padding(.horizontal, 7)
                     .padding(.vertical, 2)
                     .background(Capsule().fill(palette.track))
             }
-            .buttonStyle(.plain)
         }
         .font(.system(size: 12, weight: .medium))
         .foregroundStyle(palette.muted)

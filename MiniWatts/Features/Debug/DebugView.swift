@@ -5,7 +5,7 @@ import UIKit
 /// of the app possible: sensor names differ between iPhone models, so the way to
 /// support a new one is to read the inventory here and extend `SensorCatalog`.
 struct DebugView: View {
-    @Environment(PowerMonitor.self) private var monitor
+    @EnvironmentObject private var monitor: PowerMonitor
     @State private var inventory: [HIDSensors.ServiceInfo] = []
     @State private var accessory: AccessoryProbe.Report?
     @State private var copied = false
@@ -55,7 +55,7 @@ struct DebugView: View {
         .autocorrectionDisabled()
         .textInputAutocapitalization(.never)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     UIPasteboard.general.string = fullDump()
                     copied = true
