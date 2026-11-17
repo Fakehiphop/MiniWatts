@@ -7,8 +7,6 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        @Bindable var monitor = monitor
-        @Bindable var floatingMeter = floatingMeter
         NavigationStack {
             ZStack {
                 Backdrop(glow: .mwAccent, glowIntensity: 0.6)
@@ -35,7 +33,7 @@ struct SettingsView: View {
                     // `.frame(maxWidth: .infinity)` only expands, it does not clamp, so
                     // that width propagates up and the page starts scrolling sideways.
                     // The cap is part of the pin: see `PageScaffold`.
-                    .containerRelativeFrame(.horizontal) { width, _ in min(width, 760) }
+                    .mwContainerWidthCap(760)
                     .frame(maxWidth: .infinity)
                 }
             }
@@ -396,5 +394,29 @@ struct SettingsView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
+    }
+}
+
+// MARK: - iOS 16 compat
+
+/// `containerRelativeFrame(.horizontal)` clamp is iOS 17+. On iOS 16 the same
+/// cap is expressed with `frame(maxWidth:)`, which clamps without expanding.
+struct MWContainerWidthCap: ViewModifier {
+    var limit: CGFloat
+
+    func body(content: Content) -> some View {
+        if #available(iOS 17.0, *) {
+            content.containerRelativeFrame(.horizontal) { width, _ in
+                min(width, limit)
+            }
+        } else {
+            content.frame(maxWidth: limit)
+        }
+    }
+}
+
+extension View {
+    func mwContainerWidthCap(_ limit: CGFloat) -> some View {
+        modifier(MWContainerWidthCap(limit: limit))
     }
 }

@@ -44,7 +44,7 @@ struct DebugView: View {
                 // `.frame(maxWidth: .infinity)` only expands, it does not clamp, so
                 // that width propagates up and the page starts scrolling sideways.
                 // The cap is part of the pin: see `PageScaffold`.
-                .containerRelativeFrame(.horizontal) { width, _ in min(width, 760) }
+                .mwContainerWidthCap(760)
                 .frame(maxWidth: .infinity)
             }
         }
