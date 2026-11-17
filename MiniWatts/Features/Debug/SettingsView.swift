@@ -41,7 +41,7 @@ struct SettingsView: View {
             .navigationBarTitleDisplayMode(.inline)
             // A widget shows the battery temperature too. Asked from the foreground, the
             // reload does not count against its refresh budget.
-            .onChange(of: monitor.temperatureUnitSetting) {
+            .onChange(of: monitor.temperatureUnitSetting) { _ in
                 WidgetCenter.shared.reloadAllTimelines()
             }
             .toolbar {
