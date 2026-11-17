@@ -336,8 +336,6 @@ private func formattedValue(
     return shortValue(for: metric, state: state)
 }
 
-#Preview("Lock Screen", as: .content,
-         using: ChargeActivityAttributes(startedAt: .now.addingTimeInterval(-1_800),
                                          startPercent: 41)) {
     ChargeLiveActivity()
 } contentStates: {
